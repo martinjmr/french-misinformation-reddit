@@ -1,0 +1,105 @@
+{
+  "random split": {
+    "text model": {
+      "mean": 0.6556572855922096,
+      "std": 0.01915498583123788
+    },
+    "claim lookup": {
+      "mean": 0.9994801438619225,
+      "std": 0.0014071996416700674
+    },
+    "theme only": {
+      "mean": 0.6016433313613356,
+      "std": 0.015647711951400942
+    },
+    "confusion (seed 0, rows = true label)": [
+      [
+        535,
+        116,
+        118
+      ],
+      [
+        119,
+        476,
+        174
+      ],
+      [
+        94,
+        157,
+        518
+      ]
+    ]
+  },
+  "unseen claims": {
+    "text model": {
+      "mean": 0.3761569363608953,
+      "std": 0.05903154863512805
+    },
+    "claim lookup": {
+      "mean": 0.31885196960430195,
+      "std": 0.009128196108555746
+    },
+    "theme only": {
+      "mean": 0.3609537782233217,
+      "std": 0.16864546517969034
+    },
+    "confusion (seed 0, rows = true label)": [
+      [
+        325,
+        280,
+        164
+      ],
+      [
+        221,
+        168,
+        380
+      ],
+      [
+        137,
+        264,
+        368
+      ]
+    ]
+  },
+  "top terms": {
+    "misleading": [
+      "europe",
+      "réforme",
+      "plus",
+      "retraites",
+      "aide",
+      "réforme des",
+      "aides",
+      "retraite"
+    ],
+    "true": [
+      "jo",
+      "record",
+      "euros",
+      "paris 2024",
+      "électricité",
+      "pen",
+      "le pen",
+      "marine"
+    ],
+    "unverifiable": [
+      "ia",
+      "eau",
+      "télétravail",
+      "réseaux",
+      "réseaux sociaux",
+      "travail",
+      "covid 19",
+      "les réseaux"
+    ]
+  },
+  "dataset": {
+    "posts": 2307,
+    "claims": 46,
+    "claims per label": {
+      "misleading": 15,
+      "true": 15,
+      "unverifiable": 16
+    }
+  }
+}

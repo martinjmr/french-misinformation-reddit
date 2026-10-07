@@ -1,0 +1,6 @@
+# Post text stays on Reddit: rebuild it with src/collect.py
+data/posts_raw.csv
+data/posts_clean.csv
+
+__pycache__/
+.venv/
