@@ -21,7 +21,7 @@ On new claims the model barely beats chance: it has learned to recognise the cla
 - **Posts**: Reddit posts from r/france and r/francophonie returned by a search on each claim's keywords. Every post takes the verdict of the claim that retrieved it.
 - **Cleaning**: duplicates and posts under five words removed, then the larger labels undersampled. 3,341 posts collected, 2,307 kept (769 per label), covering 46 claims.
 
-The post text stays on Reddit: `data/post_ids.csv` lists the post IDs. The posts were collected in 2026 from Reddit's search results. `src/collect.py` redoes the collection through the official Reddit API, which has granted new credentials only on request since November 2025; the script has been tested offline only.
+The post text stays on Reddit: `data/post_ids.csv` lists the post IDs. The posts used here were collected in 2026 by an earlier script that read Reddit's public search pages, without the API. `src/collect.py` is written for the official Reddit API but has never been run against Reddit: since November 2025, Reddit grants API credentials only on request, and none were available. It has been tested offline only.
 
 ## Why the labels mislead the model
 
@@ -59,7 +59,7 @@ Posts deleted since the collection are no longer available, so a new run can dif
 
 ## Repository
 
-- `src/collect.py`: collection through the official Reddit API (PRAW), tested offline only
+- `src/collect.py`: collection written for the official Reddit API (PRAW), never run against Reddit
 - `src/preprocess.py`: cleaning and label balancing
 - `src/evaluate.py`: both evaluation protocols, baselines and figures
 - `reports/results.md`: full results, confusion matrices and top terms per label
