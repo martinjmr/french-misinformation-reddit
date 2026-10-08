@@ -1,9 +1,11 @@
 """What do the relevant posts say about their claim, and can a model tell?
 
 Input:  data/posts_raw.csv (not versioned), data/claims.csv, data/stance_labels.csv,
-        and, when present, reports/transformers/stance_nli.csv (written by the Colab notebook)
+        data/verification_sample.csv, and, when present, reports/transformers/stance_nli.csv
+        (written by the Colab notebook)
 Output: reports/stance/{results.json, results.md}
 
+0. Agreement between the LLM labels and the author's blind labels on a sample of 50 posts.
 1. Cross the stance labels with the fact-checkers' verdicts: how many posts relay a misleading claim?
 2. Predict the stance (supports, refutes, discusses) of the relevant posts.
    Trained models: 5 folds grouped by claim, 3 seeds, predictions pooled over the folds of each seed.
@@ -16,10 +18,10 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+from sklearn.metrics import accuracy_score, cohen_kappa_score, confusion_matrix, f1_score
 from sklearn.pipeline import make_pipeline
 
-from common import REPORTS, SEEDS, claim_folds, fold_accents, load_posts
+from common import DATA, REPORTS, SEEDS, claim_folds, fold_accents, load_posts
 
 OUT = REPORTS / "stance"
 NLI_FILE = REPORTS / "transformers" / "stance_nli.csv"
@@ -62,10 +64,28 @@ def summarise(runs: list[dict]) -> dict:
     return out
 
 
+def label_agreement() -> dict:
+    """LLM labels against the author's labels, given without seeing the LLM labels.
+
+    The sample over-represents relevant posts (30 of 50) and off-topic posts that resemble their claim (10 of 20).
+    """
+    v = pd.read_csv(DATA / "verification_sample.csv")
+    relevant = lambda s: s != "off_topic"
+    labels = ["off_topic"] + STANCES
+    return {
+        "posts": len(v),
+        "agreement": float((v["label_llm"] == v["label_author"]).mean()),
+        "kappa": float(cohen_kappa_score(v["label_llm"], v["label_author"])),
+        "relevance agreement": float((relevant(v["label_llm"]) == relevant(v["label_author"])).mean()),
+        "confusion (rows: LLM, columns: author)": confusion_matrix(v["label_llm"], v["label_author"],
+                                                                  labels=labels).tolist(),
+    }
+
+
 def main() -> None:
     df = load_posts()
     OUT.mkdir(parents=True, exist_ok=True)
-    results = {}
+    results = {"label check": label_agreement()}
 
     # 1. Stance x verdict on all collected posts
     table = pd.crosstab(df["verdict"], df["stance"]).reindex(columns=["off_topic"] + STANCES, fill_value=0)
@@ -98,7 +118,12 @@ def main() -> None:
 
 
 def write_markdown(results: dict, table: pd.DataFrame) -> None:
-    lines = ["# Stance results", "", "## Stance of every collected post, by verdict of its claim", "",
+    c = results["label check"]
+    lines = ["# Stance results", "", "## Check of the labels", "",
+             f"On {c['posts']} posts labelled blind by the author, the LLM labels agree {100 * c['agreement']:.0f}% "
+             f"of the time (Cohen's kappa {c['kappa']:.2f}); on relevant versus off-topic, "
+             f"{100 * c['relevance agreement']:.0f}%.", "",
+             "## Stance of every collected post, by verdict of its claim", "",
              "| Verdict | " + " | ".join(table.columns) + " | Total |", "|---" * (len(table.columns) + 2) + "|"]
     for verdict, row in table.iterrows():
         lines.append(f"| {verdict} | " + " | ".join(str(v) for v in row) + f" | {row.sum()} |")

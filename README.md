@@ -20,7 +20,7 @@ The project started as a classifier that labelled posts true, misleading or unve
 
 - **Claims**: 48 claims checked by Les Décodeurs (Le Monde) and AFP Factuel, 16 per verdict (true, misleading, unverifiable). `data/claims.csv` gives each claim with its theme and search keywords.
 - **Posts**: 3,341 Reddit posts, mostly from r/france (2,358) and r/francophonie (982), returned by Reddit's keyword search on each claim's keywords. They were collected in 2026 and cover 46 claims. The post text is not redistributed: `data/post_ids.csv` lists the post IDs with the claim that retrieved each one.
-- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following `docs/annotation_guide.md`. The labels were produced with Claude (an LLM), which read each post's opening and, when that was not enough, its first 250 words.
+- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following `docs/annotation_guide.md`. The labels were produced with Claude (an LLM), which read each post's opening and, when that was not enough, its first 250 words. To check them, I labelled 50 posts without seeing the LLM labels (`data/verification_sample.csv`). The two sets of labels agree on 47 of 50 posts (94%, Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it.
 
 ## Version 1: predicting the verdict
 
@@ -103,7 +103,7 @@ The notebook writes `reports/transformers/relevance_scores.csv` and `stance_nli.
 
 ## Limits
 
-- **One annotator, and an LLM.** The labels have not been checked against a second annotator. The line between off-topic and discusses is a judgement call, and the guide settles it strictly: a post about a related but different event (another law, another year, another figure) is off-topic.
+- **LLM labels, checked on 50 posts.** The check sample over-represents relevant posts (30 of 50) and off-topic posts that resemble their claim (10 of 20), so 94% agreement is measured on the hard part of the data. It is a single check on 1.5% of the posts. The line between off-topic and discusses remains a judgement call, and the guide settles it strictly: a post about a related but different event (another law, another year, another figure) is off-topic.
 - **Few positives.** 219 relevant posts and 25 refutations make every metric noisy, as the standard deviations across folds show.
 - **Recall of the collection is unknown.** Posts that discuss a claim without using its keywords were never collected, so no model here can find them.
 
@@ -122,7 +122,7 @@ python stance.py                                   # stance x verdict, stance mo
 ## Repository
 
 - `docs/annotation_guide.md`: definitions and rules for the four stance labels
-- `data/`: claims, post IDs, stance labels and cross-validation folds
+- `data/`: claims, post IDs, stance labels, the 50-post label check and cross-validation folds
 - `src/common.py`: loading, cleaning and folds grouped by claim
 - `src/relevance.py`, `src/stance.py`: models, evaluation and reports
 - `src/v1_preprocess.py`, `src/v1_evaluate.py`: version 1, predicting the verdict

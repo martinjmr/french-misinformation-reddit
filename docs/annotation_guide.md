@@ -20,4 +20,4 @@ Rules:
 
 ## How the labels were produced
 
-The 3,341 posts were labelled with Claude (an LLM) following this guide, claim by claim, reading every post. The labels have not been compared with a second annotator.
+The 3,341 posts were labelled with Claude (an LLM) following this guide, claim by claim, reading every post. To check the labels, the author labelled a sample of 50 posts without seeing the LLM labels: 20 off-topic posts (10 of them among the off-topic posts most similar to their claim), 15 supporting, 7 refuting and 8 discussing. The two agree on 47 of 50 posts (Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it: a court order to cut emissions, a government dropping a nuclear-share target, and a lawsuit against Meta over teenagers' mental health.

@@ -1,4 +1,36 @@
 {
+  "label check": {
+    "posts": 50,
+    "agreement": 0.94,
+    "kappa": 0.9145299145299145,
+    "relevance agreement": 0.96,
+    "confusion (rows: LLM, columns: author)": [
+      [
+        19,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        14,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        7
+      ]
+    ]
+  },
   "stance by verdict": {
     "misleading": {
       "off_topic": 723,
