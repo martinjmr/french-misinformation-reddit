@@ -1,6 +1,6 @@
 """Clean the collected posts and balance the three labels.
 
-Input:  data/posts_raw.csv (written by collect.py) and data/claims.csv
+Input:  data/posts_raw.csv (the collected posts, not versioned) and data/claims.csv
 Output: data/posts_clean.csv
 
 Each post inherits the verdict of the fact-checked claim whose keywords

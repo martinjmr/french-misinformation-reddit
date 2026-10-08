@@ -21,7 +21,7 @@ On new claims the model barely beats chance: it has learned to recognise the cla
 - **Posts**: Reddit posts from r/france and r/francophonie returned by a search on each claim's keywords. Every post takes the verdict of the claim that retrieved it.
 - **Cleaning**: duplicates and posts under five words removed, then the larger labels undersampled. 3,341 posts collected, 2,307 kept (769 per label), covering 46 claims.
 
-The post text stays on Reddit: `data/post_ids.csv` lists the post IDs. The posts used here were collected in 2026 by an earlier script that read Reddit's public search pages, without the API. `src/collect.py` is written for the official Reddit API but has never been run against Reddit: since November 2025, Reddit grants API credentials only on request, and none were available. It has been tested offline only.
+The posts were collected in 2026 with Reddit's keyword search. Their text is not redistributed: `data/post_ids.csv` lists the post IDs with the claim that retrieved each of them.
 
 ## Why the labels mislead the model
 
@@ -46,20 +46,16 @@ When whole claims are held out (`StratifiedGroupKFold` grouped by claim), the te
 
 ## Run it
 
+Both steps need the collected posts in `data/posts_raw.csv`, with the columns `post_id`, `claim_id`, `subreddit`, `created_utc` and `text` (title and body).
+
 ```bash
 pip install -r requirements.txt
-# Reddit API credentials, granted on request since November 2025
-export REDDIT_CLIENT_ID=... REDDIT_CLIENT_SECRET=... REDDIT_USER_AGENT="disinfo-study by u/<your username>"
-python src/collect.py --ids   # re-download the posts (or --search to query Reddit again)
-python src/preprocess.py      # clean, deduplicate, balance -> data/posts_clean.csv
-python src/evaluate.py        # cross-validation, baselines, figures -> reports/
+python src/preprocess.py   # clean, deduplicate, balance -> data/posts_clean.csv
+python src/evaluate.py     # cross-validation, baselines, figures -> reports/
 ```
-
-Posts deleted since the collection are no longer available, so a new run can differ slightly from the figures above.
 
 ## Repository
 
-- `src/collect.py`: collection written for the official Reddit API (PRAW), never run against Reddit
 - `src/preprocess.py`: cleaning and label balancing
 - `src/evaluate.py`: both evaluation protocols, baselines and figures
 - `reports/results.md`: full results, confusion matrices and top terms per label

@@ -1,4 +1,4 @@
-# Post text stays on Reddit: rebuild it with src/collect.py
+# Post text is not redistributed
 data/posts_raw.csv
 data/posts_clean.csv
 
