@@ -8,12 +8,12 @@ The project started as a classifier that labelled posts true, misleading or unve
 |---|---|
 | Version 1: predict the claim's verdict from the post | 65.6% accuracy when test claims also appear in training, 37.6% on unseen claims (chance: 33.3%) |
 | Label all 3,341 posts | 219 posts (6.6%) discuss their claim. Of the 771 posts collected for misleading claims, 8 relay the claim. |
-| Rank posts by relevance to their claim, on unseen claims | TF-IDF similarity: average precision 36.8%, against 7.3% for the keyword search alone. Reading the top 27% of posts finds 80% of the relevant ones. |
-| Predict the stance of relevant posts | Best macro-F1 is 47.0%, from cue-word rules. Only 25 posts refute their claim. |
+| Rank posts by relevance to their claim, on unseen claims | Multilingual sentence embeddings, with no training: average precision 43.2%, against 7.3% for the keyword search alone. Reading the top 20% of posts finds 80% of the relevant ones. A fine-tuned CamemBERT reaches 21.4%. |
+| Predict the stance of relevant posts | Zero-shot NLI and cue-word rules reach a macro-F1 of 47.8% and 47.0%. Only 25 posts refute their claim; NLI finds 12 of them. |
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/relevance/ap_dark.png">
-  <img alt="Average precision on unseen claims: keyword search 7.3%, keyword overlap 31.0%, TF-IDF similarity 36.8%, TF-IDF and logistic regression on the post alone 15.8%, pair features and logistic regression 35.6%. Share of relevant posts: 6.6%." src="reports/relevance/ap_light.png" width="760">
+  <img alt="Average precision on unseen claims: keyword search 7.3%, keyword overlap 31.0%, TF-IDF similarity 36.8%, TF-IDF and logistic regression on the post alone 15.8%, pair features and logistic regression 35.6%, fine-tuned CamemBERT 21.4%, multilingual embeddings 43.2%, zero-shot NLI 14.1%. Share of relevant posts: 6.6%." src="reports/relevance/ap_light.png" width="760">
 </picture>
 
 ## Data
@@ -66,19 +66,25 @@ A label from the claim says nothing about what an individual post says. To measu
 |---|---|---|---|
 | Keyword search: every retrieved post, in random order | none | 7.3% ± 1.5 | 80.3% ± 6.5 |
 | Keyword overlap: share of the claim's keywords in the post | none | 31.0% ± 7.9 | 40.1% ± 5.8 |
-| TF-IDF similarity between the claim and the post | none | **36.8% ± 8.2** | 27.2% ± 10.3 |
+| TF-IDF similarity between the claim and the post | none | 36.8% ± 8.2 | 27.2% ± 10.3 |
 | TF-IDF + logistic regression on the post alone | supervised | 15.8% ± 4.5 | 39.6% ± 8.0 |
-| Pair features + logistic regression | supervised | 35.6% ± 7.4 | **26.0% ± 8.1** |
+| Pair features + logistic regression | supervised | 35.6% ± 7.4 | 26.0% ± 8.1 |
+| Multilingual sentence embeddings (e5): cosine between the claim and the post | none (pre-trained) | **43.2% ± 14.2** | **20.4% ± 6.6** |
+| Zero-shot NLI (mDeBERTa): probability that the post entails "this text is about the claim" | none (pre-trained) | 14.1% ± 8.5 | 73.8% ± 20.1 |
+| CamemBERT fine-tuned on (claim, post) pairs | supervised | 21.4% ± 8.1 | 36.4% ± 5.1 |
 
-- **Similarity does most of the work.** The unsupervised TF-IDF cosine between the claim and the post, computed on the post's first 60 words and on the whole post, reaches an average precision more than five times the share of relevant posts.
+- **Pre-trained similarity does best.** The e5 encoder was trained on millions of (query, passage) pairs to give texts with the same meaning close vectors. It ranks relevant posts best, with a large spread across folds (± 14.2). Inside a claim, it puts the relevant posts first with an average precision of 71%, against 59% for TF-IDF (mean over the 23 claims with at least 3 relevant posts).
+- **TF-IDF similarity is a strong baseline.** The unsupervised cosine between the claim and the post, computed on the post's first 60 words and on the whole post, reaches an average precision more than five times the share of relevant posts.
 - **Learning adds little on unseen claims.** The pair model combines seven features (cosine and keyword overlap on the opening and on the whole post, claim words in the opening, length, title-only post). It matches plain similarity. Its largest weight goes to the similarity of the opening (+1.40, standardised). With 219 positives spread over 40 claims, there is little to learn beyond similarity that carries over to new claims.
+- **Fine-tuning CamemBERT does worse than similarity.** Each fold trains it on about 175 relevant pairs from about 32 claims. Its scores follow the post-only model (Spearman correlation 0.69) more than e5 (0.49), and 41% of their variance lies between claims, against 21% for e5. Inside a claim, its average precision is 45%, the level of the post-only model (43%). It learned which kinds of posts were relevant for the training claims, more than whether a post matches its own claim.
 - **A model that reads only the post learns topics.** TF-IDF + logistic regression on the post alone reaches 15.8%. Without the claim, it can only learn which subjects tend to be relevant in the training claims.
+- **Zero-shot NLI is the wrong tool for relevance.** NLI models are trained to judge whether a premise implies a statement about the world. "This text is about the claim" is a statement about the text itself, and the entailment probability barely separates relevant posts.
 
 **Errors** of the pair model on seed 0 (`reports/relevance/errors_seed0.csv`):
 - The highest-scored off-topic posts share the claim's words but not its object. They are about another law struck down by the Constitutional Council, public debt passing 2,000 billion euros for a claim about 3,000 billion, the 2015 fall in life expectancy for a claim about Covid, or emission statistics for a claim about missed targets.
 - The lowest-scored relevant posts make their point in other words. Examples are a satirical investigation of the companies behind 5G health-scare ads, and long posts that reach the claim after their opening paragraph.
 
-Telling these cases apart takes a reading of meaning, numbers and dates that word overlap cannot provide. That is the motivation for the transformer models below.
+The embeddings fix part of the second kind of error: e5 moves these 15 relevant posts from the bottom of the pair model's ranking to the 81st percentile of their fold on average. The first kind remains: e5 places the 15 off-topic posts at the 85th percentile on average. None of the models compares laws, figures or dates.
 
 ## What relevant posts say
 
@@ -89,17 +95,21 @@ Stance prediction on the 219 relevant posts (`src/stance.py`). The trained model
 | Majority label (supports) | 23.0% | 52.5% | 100% / 0% / 0% |
 | Cue words: debunk vocabulary → refutes, a question in the opening → discusses, otherwise supports | 47.0% | 60.3% | 87% / 20% / 34% |
 | TF-IDF + logistic regression | 39.4% ± 1.0 | 52.4% | 55% / 4% / 64% |
+| Zero-shot NLI (mDeBERTa, no training): entailment → supports, contradiction → refutes, neutral → discusses | 47.8% | 50.2% | 37% / 48% / 71% |
 
-With 25 refuting posts, no trained model learns to recognise a refutation: the logistic regression finds 1 of the 25. The cue-word rules do better because they encode the vocabulary of debunking ("faux", "intox", "complot") directly. Detecting posts that relay misinformation would need many more relevant posts, collected with a better search than keywords.
+- With 25 refuting posts, no trained model learns to recognise a refutation: the logistic regression finds 1 of the 25.
+- The cue-word rules find 5, because they encode the vocabulary of debunking ("faux", "intox", "complot") directly.
+- The NLI model, which needs no examples, finds 12. It also labels 64 of the 115 supporting posts as discussing: NLI asks whether the post implies the claim's exact statement, while the guide counts any post that presents the event as fact as support.
+- Detecting posts that relay misinformation would need many more relevant posts, collected with a better search than keywords.
 
-## Transformer models (Google Colab)
+## Running the transformer models (Google Colab)
 
-`notebooks/transformers_colab.ipynb` runs three transformer models on the same folds, on a T4 GPU in about 30 minutes:
+`notebooks/transformers_colab.ipynb` runs the three transformer models on the same folds, on a T4 GPU in 20 to 30 minutes:
 1. multilingual sentence embeddings (`intfloat/multilingual-e5-base`), scoring each pair by cosine similarity, without training;
 2. zero-shot natural language inference (`MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`). For relevance it tests whether the post entails "this text is about the claim"; for stance it tests whether the post entails or contradicts the claim;
 3. CamemBERT (`almanach/camembert-base`) fine-tuned on (claim, post) pairs for relevance.
 
-The notebook writes `reports/transformers/relevance_scores.csv` and `stance_nli.csv`, which hold post IDs and scores and no text. `src/relevance.py` and `src/stance.py` add these models to their results when the files are present.
+The notebook writes `reports/transformers/relevance_scores.csv` and `stance_nli.csv`, which hold post IDs and scores and no text. `src/relevance.py` and `src/stance.py` read them and score these models with the same code as the others. CamemBERT's settings (3 epochs, 256 tokens, learning rate 2e-5) were fixed in advance and not tuned.
 
 ## Limits
 

@@ -21,6 +21,7 @@ On 50 posts labelled blind by the author, the LLM labels agree 94% of the time (
 | Majority label (supports) | 23.0% ± 0.0 | 52.5% | 100% | 0% | 0% |
 | Cue words (rules) | 47.0% ± 0.0 | 60.3% | 87% | 20% | 34% |
 | TF-IDF + logistic regression | 39.4% ± 1.0 | 52.4% | 55% | 4% | 64% |
+| Zero-shot NLI (mDeBERTa, no training) | 47.8% ± 0.0 | 50.2% | 37% | 48% | 71% |
 
 Confusion matrices (rows: true stance; columns: supports, refutes, discusses)
 
@@ -47,3 +48,11 @@ Confusion matrices (rows: true stance; columns: supports, refutes, discusses)
 | supports | 61 | 7 | 47 |
 | refutes | 7 | 1 | 17 |
 | discusses | 24 | 4 | 51 |
+
+**Zero-shot NLI (mDeBERTa, no training)**
+
+| | supports | refutes | discusses |
+|---|---|---|---|
+| supports | 42 | 9 | 64 |
+| refutes | 1 | 12 | 12 |
+| discusses | 9 | 14 | 56 |

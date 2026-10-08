@@ -147,6 +147,38 @@
           51
         ]
       ]
+    },
+    "Zero-shot NLI (mDeBERTa, no training)": {
+      "macro_f1": {
+        "mean": 0.47793323305994645,
+        "std": 0.0
+      },
+      "accuracy": {
+        "mean": 0.502283105022831,
+        "std": 0.0
+      },
+      "recall": {
+        "supports": 0.3652173913043478,
+        "refutes": 0.48,
+        "discusses": 0.7088607594936709
+      },
+      "confusion (first seed)": [
+        [
+          42,
+          9,
+          64
+        ],
+        [
+          1,
+          12,
+          12
+        ],
+        [
+          9,
+          14,
+          56
+        ]
+      ]
     }
   },
   "dataset": {

@@ -9,6 +9,9 @@
 | TF-IDF similarity (claim, post) | 36.8% ± 8.2 | 27.2% ± 10.3 |
 | TF-IDF + logistic regression, post only | 15.8% ± 4.5 | 39.6% ± 8.0 |
 | Pair features + logistic regression | 35.6% ± 7.4 | 26.0% ± 8.1 |
+| CamemBERT fine-tuned on (claim, post) pairs | 21.4% ± 8.1 | 36.4% ± 5.1 |
+| Multilingual embeddings (e5), cosine | 43.2% ± 14.2 | 20.4% ± 6.6 |
+| Zero-shot NLI (mDeBERTa) | 14.1% ± 8.5 | 73.8% ± 20.1 |
 
 Coefficients of the pair model (standardised features, fitted on all posts)
 
