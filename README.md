@@ -1,4 +1,4 @@
-# French Disinformation Classifier
+# Misinformation on French Reddit
 
 Which French Reddit posts discuss a claim that fact-checkers have checked, and what do they say about it?
 
@@ -104,7 +104,7 @@ Stance prediction on the 219 relevant posts (`src/stance.py`). The trained model
 
 ## Running the transformer models (Google Colab)
 
-`notebooks/transformers_colab.ipynb` runs the three transformer models on the same folds, on a T4 GPU in 20 to 30 minutes:
+`notebooks/transformers_colab.ipynb` runs the three transformer models on the same folds, on a T4 GPU in about 40 minutes, 30 of them for fine-tuning CamemBERT:
 1. multilingual sentence embeddings (`intfloat/multilingual-e5-base`), scoring each pair by cosine similarity, without training;
 2. zero-shot natural language inference (`MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`). For relevance it tests whether the post entails "this text is about the claim"; for stance it tests whether the post entails or contradicts the claim;
 3. CamemBERT (`almanach/camembert-base`) fine-tuned on (claim, post) pairs for relevance.
