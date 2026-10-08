@@ -21,7 +21,7 @@ On new claims the model barely beats chance: it has learned to recognise the cla
 - **Posts**: Reddit posts from r/france and r/francophonie returned by a search on each claim's keywords. Every post takes the verdict of the claim that retrieved it.
 - **Cleaning**: duplicates and posts under five words removed, then the larger labels undersampled. 3,341 posts collected, 2,307 kept (769 per label), covering 46 claims.
 
-The post text stays on Reddit. `data/post_ids.csv` lists the post IDs, and `src/collect.py --ids` downloads them again through the official Reddit API.
+The post text stays on Reddit: `data/post_ids.csv` lists the post IDs. The posts were collected in 2026 from Reddit's search results. `src/collect.py` redoes the collection through the official Reddit API, which has granted new credentials only on request since November 2025; the script has been tested offline only.
 
 ## Why the labels mislead the model
 
@@ -48,17 +48,18 @@ When whole claims are held out (`StratifiedGroupKFold` grouped by claim), the te
 
 ```bash
 pip install -r requirements.txt
+# Reddit API credentials, granted on request since November 2025
 export REDDIT_CLIENT_ID=... REDDIT_CLIENT_SECRET=... REDDIT_USER_AGENT="disinfo-study by u/<your username>"
 python src/collect.py --ids   # re-download the posts (or --search to query Reddit again)
 python src/preprocess.py      # clean, deduplicate, balance -> data/posts_clean.csv
 python src/evaluate.py        # cross-validation, baselines, figures -> reports/
 ```
 
-Credentials come from a "script" app created at https://www.reddit.com/prefs/apps. Posts deleted since the collection are no longer available, so a new run can differ slightly from the figures above.
+Posts deleted since the collection are no longer available, so a new run can differ slightly from the figures above.
 
 ## Repository
 
-- `src/collect.py`: collection through the official Reddit API (PRAW)
+- `src/collect.py`: collection through the official Reddit API (PRAW), tested offline only
 - `src/preprocess.py`: cleaning and label balancing
 - `src/evaluate.py`: both evaluation protocols, baselines and figures
 - `reports/results.md`: full results, confusion matrices and top terms per label

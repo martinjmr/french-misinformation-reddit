@@ -7,8 +7,8 @@ Two modes:
 Output: data/posts_raw.csv (post_id, claim_id, subreddit, created_utc, text). It is
 not versioned: post text stays on Reddit, and deleted posts are not re-downloaded.
 
-Credentials come from environment variables; create a "script" app at
-https://www.reddit.com/prefs/apps to get them:
+Credentials come from environment variables. Since November 2025, Reddit grants new API
+credentials only on request (Responsible Builder Policy):
   REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT (e.g. "disinfo-study by u/<username>")
 PRAW follows Reddit's rate limits on its own.
 """
