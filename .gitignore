@@ -1,6 +1,6 @@
 # Post text is not redistributed
 data/posts_raw.csv
-data/posts_clean.csv
+data/v1_posts_balanced.csv
 
 __pycache__/
 .venv/

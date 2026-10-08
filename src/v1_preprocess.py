@@ -1,7 +1,7 @@
-"""Clean the collected posts and balance the three labels.
+"""Version 1: clean the collected posts and balance the three verdict labels.
 
 Input:  data/posts_raw.csv (the collected posts, not versioned) and data/claims.csv
-Output: data/posts_clean.csv
+Output: data/v1_posts_balanced.csv
 
 Each post inherits the verdict of the fact-checked claim whose keywords
 retrieved it: the label describes the claim, not what the post says.
@@ -51,9 +51,9 @@ def main() -> None:
     ).sample(frac=1, random_state=SEED)
 
     cols = ["post_id", "claim_id", "label", "theme", "subreddit", "created_utc", "text_clean"]
-    balanced[cols].to_csv(DATA / "posts_clean.csv", index=False)
+    balanced[cols].to_csv(DATA / "v1_posts_balanced.csv", index=False)
     print(f"Balanced: {len(balanced)} posts ({n} per label), "
-          f"{balanced['claim_id'].nunique()} claims -> data/posts_clean.csv")
+          f"{balanced['claim_id'].nunique()} claims -> data/v1_posts_balanced.csv")
 
 
 if __name__ == "__main__":

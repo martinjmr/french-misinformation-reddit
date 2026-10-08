@@ -1,7 +1,7 @@
-"""Evaluate the classifier when test claims are seen, and when they are not.
+"""Version 1: predict the verdict of the retrieving claim from the post text.
 
-Input:  data/posts_clean.csv (written by preprocess.py)
-Output: reports/results.json, reports/results.md, reports/accuracy_{light,dark}.png
+Input:  data/v1_posts_balanced.csv (written by v1_preprocess.py)
+Output: reports/v1/results.json, results.md, accuracy_{light,dark}.png
 
 Two cross-validation protocols, 5 folds repeated with 5 seeds:
 - random split: posts are assigned to folds at random, so posts retrieved
@@ -139,19 +139,19 @@ def plot(results: dict, mode: str, path: Path) -> None:
 
 
 def main() -> None:
-    df = pd.read_csv(ROOT / "data" / "posts_clean.csv")
+    df = pd.read_csv(ROOT / "data" / "v1_posts_balanced.csv")
     results = {protocol: cross_validate(df, protocol) for protocol in ("random split", "unseen claims")}
     results["top terms"] = top_terms(df)
     results["dataset"] = {"posts": len(df), "claims": int(df["claim_id"].nunique()),
                           "claims per label": df.groupby("label")["claim_id"].nunique().to_dict()}
 
-    out = ROOT / "reports"
+    out = ROOT / "reports" / "v1"
     out.mkdir(exist_ok=True)
     (out / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False))
     for mode in ("light", "dark"):
         plot(results, mode, out / f"accuracy_{mode}.png")
 
-    lines = ["# Results", "", f"{len(df)} posts, {df['claim_id'].nunique()} claims, "
+    lines = ["# Version 1 results: predicting the verdict", "", f"{len(df)} posts, {df['claim_id'].nunique()} claims, "
              f"{N_FOLDS}-fold cross-validation repeated with {len(SEEDS)} seeds (mean ± std over folds).", "",
              "| Model | Random split | Unseen claims |", "|---|---|---|"]
     for name in ("text model", "claim lookup", "theme only"):

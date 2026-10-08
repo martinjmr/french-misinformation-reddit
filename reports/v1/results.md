@@ -1,4 +1,4 @@
-# Results
+# Version 1 results: predicting the verdict
 
 2307 posts, 46 claims, 5-fold cross-validation repeated with 5 seeds (mean ± std over folds).
 

@@ -1,0 +1,74 @@
+{
+  "dataset": {
+    "posts": 3341,
+    "relevant": 219,
+    "claims": 46,
+    "folds": "5 folds grouped by claim",
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "models": {
+    "Keyword search (every retrieved post)": {
+      "ap": {
+        "mean": 0.07265823201285415,
+        "std": 0.014744047255806813
+      },
+      "load": {
+        "mean": 0.8026640364995998,
+        "std": 0.06508941071631788
+      }
+    },
+    "Keyword overlap": {
+      "ap": {
+        "mean": 0.3100950326901616,
+        "std": 0.07881812057722476
+      },
+      "load": {
+        "mean": 0.4013814887079752,
+        "std": 0.0577418740958258
+      }
+    },
+    "TF-IDF similarity (claim, post)": {
+      "ap": {
+        "mean": 0.36761863291677116,
+        "std": 0.0820092238560738
+      },
+      "load": {
+        "mean": 0.27168716355191014,
+        "std": 0.10346470634352549
+      }
+    },
+    "TF-IDF + logistic regression, post only": {
+      "ap": {
+        "mean": 0.1580977571177859,
+        "std": 0.04497628669431603
+      },
+      "load": {
+        "mean": 0.3957220174868411,
+        "std": 0.0801929976402208
+      }
+    },
+    "Pair features + logistic regression": {
+      "ap": {
+        "mean": 0.35610103715158486,
+        "std": 0.07384262798734378
+      },
+      "load": {
+        "mean": 0.2600991607650536,
+        "std": 0.08122270257051914
+      }
+    }
+  },
+  "pair model coefficients": {
+    "cos_full": 0.12,
+    "cos_lead": 1.4,
+    "kw_full": 0.45,
+    "kw_lead": 0.48,
+    "claim_words_lead": -0.94,
+    "log_words": -0.77,
+    "title_only": -0.55
+  }
+}

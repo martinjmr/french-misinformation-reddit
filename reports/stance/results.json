@@ -1,0 +1,129 @@
+{
+  "stance by verdict": {
+    "misleading": {
+      "off_topic": 723,
+      "supports": 8,
+      "refutes": 15,
+      "discusses": 25
+    },
+    "true": {
+      "off_topic": 1535,
+      "supports": 79,
+      "refutes": 0,
+      "discusses": 21
+    },
+    "unverifiable": {
+      "off_topic": 864,
+      "supports": 28,
+      "refutes": 10,
+      "discusses": 33
+    }
+  },
+  "stance models": {
+    "Majority label (supports)": {
+      "macro_f1": {
+        "mean": 0.22954091816367264,
+        "std": 0.0
+      },
+      "accuracy": {
+        "mean": 0.5251141552511416,
+        "std": 0.0
+      },
+      "recall": {
+        "supports": 1.0,
+        "refutes": 0.0,
+        "discusses": 0.0
+      },
+      "confusion (first seed)": [
+        [
+          115,
+          0,
+          0
+        ],
+        [
+          25,
+          0,
+          0
+        ],
+        [
+          79,
+          0,
+          0
+        ]
+      ]
+    },
+    "Cue words (rules)": {
+      "macro_f1": {
+        "mean": 0.4702150654047268,
+        "std": 0.0
+      },
+      "accuracy": {
+        "mean": 0.6027397260273972,
+        "std": 0.0
+      },
+      "recall": {
+        "supports": 0.8695652173913043,
+        "refutes": 0.20000000000000004,
+        "discusses": 0.34177215189873417
+      },
+      "confusion (first seed)": [
+        [
+          100,
+          2,
+          13
+        ],
+        [
+          17,
+          5,
+          3
+        ],
+        [
+          42,
+          10,
+          27
+        ]
+      ]
+    },
+    "TF-IDF + logistic regression": {
+      "macro_f1": {
+        "mean": 0.3936510113655393,
+        "std": 0.009769179711798673
+      },
+      "accuracy": {
+        "mean": 0.5235920852359209,
+        "std": 0.014115096644590127
+      },
+      "recall": {
+        "supports": 0.5507246376811593,
+        "refutes": 0.04,
+        "discusses": 0.6371308016877637
+      },
+      "confusion (first seed)": [
+        [
+          61,
+          7,
+          47
+        ],
+        [
+          7,
+          1,
+          17
+        ],
+        [
+          24,
+          4,
+          51
+        ]
+      ]
+    }
+  },
+  "dataset": {
+    "relevant posts": 219,
+    "labels": {
+      "supports": 115,
+      "discusses": 79,
+      "refutes": 25
+    },
+    "claims": 40
+  }
+}
