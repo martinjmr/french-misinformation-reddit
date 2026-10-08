@@ -2,7 +2,7 @@
 
 ## Check of the labels
 
-On 50 posts labelled blind by the author, the LLM labels agree 94% of the time (Cohen's kappa 0.91); on relevant versus off-topic, 96%.
+On 50 posts that I labelled blind, the LLM labels agree with mine 94% of the time (Cohen's kappa 0.91); on relevant versus off-topic, 96%.
 
 ## Stance of every collected post, by verdict of its claim
 

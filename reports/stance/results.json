@@ -4,7 +4,7 @@
     "agreement": 0.94,
     "kappa": 0.9145299145299145,
     "relevance agreement": 0.96,
-    "confusion (rows: LLM, columns: author)": [
+    "confusion (rows: LLM, columns: mine)": [
       [
         19,
         1,

@@ -2,7 +2,7 @@
 
 Which French Reddit posts discuss a claim that fact-checkers have checked, and what do they say about it?
 
-The project started as a classifier that labelled posts true, misleading or unverifiable. Its accuracy fell to chance on claims it had not seen in training. Labelling every post showed why: 93% of the posts never discuss the claim they were collected for. The project now does two things. It ranks posts by how likely they are to discuss a given claim, and it measures what the relevant posts say about that claim.
+This started as a team project: we built a classifier that labelled posts true, misleading or unverifiable. Its accuracy fell to chance on claims it had not seen in training. I then labelled every post to find out why, and 93% of them never discuss the claim they were collected for. So I changed the question. The project now ranks posts by how likely they are to discuss a given claim, and measures what the relevant posts say about that claim.
 
 | Step | Result |
 |---|---|
@@ -19,12 +19,12 @@ The project started as a classifier that labelled posts true, misleading or unve
 ## Data
 
 - **Claims**: 48 claims checked by Les Décodeurs (Le Monde) and AFP Factuel, 16 per verdict (true, misleading, unverifiable). `data/claims.csv` gives each claim with its theme and search keywords.
-- **Posts**: 3,341 Reddit posts, mostly from r/france (2,358) and r/francophonie (982), returned by Reddit's keyword search on each claim's keywords. They were collected in 2026 and cover 46 claims. The post text is not redistributed: `data/post_ids.csv` lists the post IDs with the claim that retrieved each one.
-- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following `docs/annotation_guide.md`. The labels were produced with Claude (an LLM), which read each post's opening and, when that was not enough, its first 250 words. To check them, I labelled 50 posts without seeing the LLM labels (`data/verification_sample.csv`). The two sets of labels agree on 47 of 50 posts (94%, Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it.
+- **Posts**: we collected 3,341 Reddit posts in 2026, mostly from r/france (2,358) and r/francophonie (982), with Reddit's keyword search on each claim's keywords. They cover 46 claims. The post text is not redistributed: `data/post_ids.csv` lists the post IDs with the claim that retrieved each one.
+- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following the rules in `docs/annotation_guide.md`. I had Claude (an LLM) apply these rules to every post: it read each post's opening and, when that was not enough, its first 250 words. To check its labels, I labelled 50 posts myself without seeing them (`data/verification_sample.csv`). We agree on 47 of 50 posts (94%, Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it.
 
 ## Version 1: predicting the verdict
 
-Each post took the verdict of the claim whose keywords retrieved it. A TF-IDF and logistic-regression classifier was then trained to predict that verdict from the post text (`src/v1_preprocess.py`, `src/v1_evaluate.py`, three balanced labels of 769 posts).
+We gave each post the verdict of the claim whose keywords retrieved it, then trained a TF-IDF and logistic-regression classifier to predict that verdict from the post text (`src/v1_preprocess.py`, `src/v1_evaluate.py`, three balanced labels of 769 posts).
 
 | Model (5-fold CV, 5 seeds) | Random split | Unseen claims |
 |---|---|---|
@@ -35,13 +35,13 @@ Each post took the verdict of the claim whose keywords retrieved it. A TF-IDF an
 - With a random split, every test claim also appears in training, so knowing the claim gives the label almost perfectly.
 - Themes and verdicts are confounded. The 6 technology claims are all unverifiable, and none of the 5 economy claims is misleading. The theme alone reaches 60.2%.
 - The model's strongest terms are the subjects of the claims: "retraites" for misleading, "jo" and "paris 2024" for true, "ia" and "télétravail" for unverifiable.
-- When whole claims are held out (`StratifiedGroupKFold` grouped by claim), the text model falls to 37.6%, the level of the theme-only baseline.
+- When I hold out whole claims (`StratifiedGroupKFold` grouped by claim), the text model falls to 37.6%, the level of the theme-only baseline.
 
-The model recognised the claims of its training set and could not judge the posts. Full results are in `reports/v1/results.md`.
+Our model recognised the claims of its training set and could not judge the posts. Full results are in `reports/v1/results.md`.
 
 ## What the posts say about their claim
 
-A label from the claim says nothing about what an individual post says. To measure that, every post was labelled by its stance towards the claim that retrieved it:
+A label taken from the claim says nothing about what an individual post says. To measure that, I labelled every post by its stance towards the claim that retrieved it:
 
 | Verdict of the claim | Off-topic | Supports | Refutes | Discusses | Posts |
 |---|---|---|---|---|---|
@@ -56,9 +56,9 @@ A label from the claim says nothing about what an individual post says. To measu
 
 ## Finding the posts that discuss a claim
 
-**Task.** Each model scores a (claim, post) pair, and posts are ranked by score. The positive class is "the post discusses its claim" (supports, refutes or discusses): 219 of 3,341 pairs. `src/relevance.py`.
+**Task.** Each model scores a (claim, post) pair, and I rank the posts by score. The positive class is "the post discusses its claim" (supports, refutes or discusses): 219 of 3,341 pairs. `src/relevance.py`.
 
-**Evaluation.** There are 5 folds grouped by claim, so a test claim never appears in training, repeated with 3 seeds (`data/folds.csv`). Two metrics:
+**Evaluation.** I use 5 folds grouped by claim, so a test claim never appears in training, repeated with 3 seeds (`data/folds.csv`), and two metrics:
 - **Average precision (AP)**: the area under the precision-recall curve. A random ranking scores the share of relevant posts (6.6%).
 - **Reading load**: the share of a fold's posts to read, best-ranked first, to find 80% of its relevant posts.
 
@@ -80,7 +80,7 @@ A label from the claim says nothing about what an individual post says. To measu
 - **A model that reads only the post learns topics.** TF-IDF + logistic regression on the post alone reaches 15.8%. Without the claim, it can only learn which subjects tend to be relevant in the training claims.
 - **Zero-shot NLI is the wrong tool for relevance.** NLI models are trained to judge whether a premise implies a statement about the world. "This text is about the claim" is a statement about the text itself, and the entailment probability barely separates relevant posts.
 
-**Errors** of the pair model on seed 0 (`reports/relevance/errors_seed0.csv`):
+**Errors.** I read the 15 worst errors of each kind made by the pair model on seed 0 (`reports/relevance/errors_seed0.csv`):
 - The highest-scored off-topic posts share the claim's words but not its object. They are about another law struck down by the Constitutional Council, public debt passing 2,000 billion euros for a claim about 3,000 billion, the 2015 fall in life expectancy for a claim about Covid, or emission statistics for a claim about missed targets.
 - The lowest-scored relevant posts make their point in other words. Examples are a satirical investigation of the companies behind 5G health-scare ads, and long posts that reach the claim after their opening paragraph.
 
@@ -88,7 +88,7 @@ The embeddings fix part of the second kind of error: e5 moves these 15 relevant 
 
 ## What relevant posts say
 
-Stance prediction on the 219 relevant posts (`src/stance.py`). The trained model uses 5 folds grouped by claim and 3 seeds.
+I then predicted the stance of the 219 relevant posts (`src/stance.py`), with 5 folds grouped by claim and 3 seeds for the trained model.
 
 | Model | Macro-F1 | Accuracy | Recall: supports / refutes / discusses |
 |---|---|---|---|
@@ -100,22 +100,22 @@ Stance prediction on the 219 relevant posts (`src/stance.py`). The trained model
 - With 25 refuting posts, no trained model learns to recognise a refutation: the logistic regression finds 1 of the 25.
 - The cue-word rules find 5, because they encode the vocabulary of debunking ("faux", "intox", "complot") directly.
 - The NLI model, which needs no examples, finds 12. It also labels 64 of the 115 supporting posts as discussing: NLI asks whether the post implies the claim's exact statement, while the guide counts any post that presents the event as fact as support.
-- Detecting posts that relay misinformation would need many more relevant posts, collected with a better search than keywords.
+- To detect posts that relay misinformation, I would need many more relevant posts, collected with a better search than keywords.
 
 ## Running the transformer models (Google Colab)
 
-`notebooks/transformers_colab.ipynb` runs the three transformer models on the same folds, on a T4 GPU in about 40 minutes, 30 of them for fine-tuning CamemBERT:
+I ran the three transformer models on Google Colab with `notebooks/transformers_colab.ipynb`, on the same folds. It takes about 40 minutes on a T4 GPU, 30 of them for fine-tuning CamemBERT:
 1. multilingual sentence embeddings (`intfloat/multilingual-e5-base`), scoring each pair by cosine similarity, without training;
 2. zero-shot natural language inference (`MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`). For relevance it tests whether the post entails "this text is about the claim"; for stance it tests whether the post entails or contradicts the claim;
 3. CamemBERT (`almanach/camembert-base`) fine-tuned on (claim, post) pairs for relevance.
 
-The notebook writes `reports/transformers/relevance_scores.csv` and `stance_nli.csv`, which hold post IDs and scores and no text. `src/relevance.py` and `src/stance.py` read them and score these models with the same code as the others. CamemBERT's settings (3 epochs, 256 tokens, learning rate 2e-5) were fixed in advance and not tuned.
+The notebook writes `reports/transformers/relevance_scores.csv` and `stance_nli.csv`, which hold post IDs and scores and no text. `src/relevance.py` and `src/stance.py` read them and score these models with the same code as the others. I fixed CamemBERT's settings (3 epochs, 256 tokens, learning rate 2e-5) in advance and did not tune them.
 
 ## Limits
 
-- **LLM labels, checked on 50 posts.** The check sample over-represents relevant posts (30 of 50) and off-topic posts that resemble their claim (10 of 20), so 94% agreement is measured on the hard part of the data. It is a single check on 1.5% of the posts. The line between off-topic and discusses remains a judgement call, and the guide settles it strictly: a post about a related but different event (another law, another year, another figure) is off-topic.
+- **LLM labels, checked on 50 posts.** I chose a hard sample for my check: 30 relevant posts out of 50, and 10 off-topic posts among those that most resemble their claim. It covers 1.5% of the posts. The line between off-topic and discusses remains a judgement call, and the guide settles it strictly: a post about a related but different event (another law, another year, another figure) is off-topic.
 - **Few positives.** 219 relevant posts and 25 refutations make every metric noisy, as the standard deviations across folds show.
-- **Recall of the collection is unknown.** Posts that discuss a claim without using its keywords were never collected, so no model here can find them.
+- **Recall of the collection is unknown.** We never collected the posts that discuss a claim without using its keywords, so no model here can find them.
 
 ## Run it
 

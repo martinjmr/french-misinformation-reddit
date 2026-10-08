@@ -1,6 +1,6 @@
 # Annotation guide: stance of a post towards its claim
 
-Each post was retrieved by the keywords of one fact-checked claim. The annotator reads the claim and the post's opening (title and first 60 words), and the first 250 words when the opening is not enough. The annotator then gives one of four labels, always relative to that claim.
+Each post was retrieved by the keywords of one fact-checked claim. The annotator reads the claim and the post's opening (title and first 60 words), and the first 250 words when the opening is not enough, then gives one of four labels, always relative to that claim.
 
 | Label | Code | Definition |
 |---|---|---|
@@ -20,4 +20,4 @@ Rules:
 
 ## How the labels were produced
 
-The 3,341 posts were labelled with Claude (an LLM) following this guide, claim by claim, reading every post. To check the labels, the author labelled a sample of 50 posts without seeing the LLM labels: 20 off-topic posts (10 of them among the off-topic posts most similar to their claim), 15 supporting, 7 refuting and 8 discussing. The two agree on 47 of 50 posts (Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it: a court order to cut emissions, a government dropping a nuclear-share target, and a lawsuit against Meta over teenagers' mental health.
+I had Claude (an LLM) label the 3,341 posts with this guide, claim by claim, reading every post. To check its labels, I labelled a sample of 50 posts myself without seeing them: 20 off-topic posts (10 of them among the off-topic posts most similar to their claim), 15 supporting, 7 refuting and 8 discussing. We agree on 47 of 50 posts (Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it: a court order to cut emissions, a government dropping a nuclear-share target, and a lawsuit against Meta over teenagers' mental health.

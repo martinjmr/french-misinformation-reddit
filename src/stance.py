@@ -5,7 +5,7 @@ Input:  data/posts_raw.csv (not versioned), data/claims.csv, data/stance_labels.
         (written by the Colab notebook)
 Output: reports/stance/{results.json, results.md}
 
-0. Agreement between the LLM labels and the author's blind labels on a sample of 50 posts.
+0. Agreement between the LLM labels and my own labels, given blind, on a sample of 50 posts.
 1. Cross the stance labels with the fact-checkers' verdicts: how many posts relay a misleading claim?
 2. Predict the stance (supports, refutes, discusses) of the relevant posts.
    Trained models: 5 folds grouped by claim, 3 seeds, predictions pooled over the folds of each seed.
@@ -65,7 +65,7 @@ def summarise(runs: list[dict]) -> dict:
 
 
 def label_agreement() -> dict:
-    """LLM labels against the author's labels, given without seeing the LLM labels.
+    """LLM labels against my labels, given without seeing the LLM labels.
 
     The sample over-represents relevant posts (30 of 50) and off-topic posts that resemble their claim (10 of 20).
     """
@@ -77,7 +77,7 @@ def label_agreement() -> dict:
         "agreement": float((v["label_llm"] == v["label_author"]).mean()),
         "kappa": float(cohen_kappa_score(v["label_llm"], v["label_author"])),
         "relevance agreement": float((relevant(v["label_llm"]) == relevant(v["label_author"])).mean()),
-        "confusion (rows: LLM, columns: author)": confusion_matrix(v["label_llm"], v["label_author"],
+        "confusion (rows: LLM, columns: mine)": confusion_matrix(v["label_llm"], v["label_author"],
                                                                   labels=labels).tolist(),
     }
 
@@ -120,7 +120,7 @@ def main() -> None:
 def write_markdown(results: dict, table: pd.DataFrame) -> None:
     c = results["label check"]
     lines = ["# Stance results", "", "## Check of the labels", "",
-             f"On {c['posts']} posts labelled blind by the author, the LLM labels agree {100 * c['agreement']:.0f}% "
+             f"On {c['posts']} posts that I labelled blind, the LLM labels agree with mine {100 * c['agreement']:.0f}% "
              f"of the time (Cohen's kappa {c['kappa']:.2f}); on relevant versus off-topic, "
              f"{100 * c['relevance agreement']:.0f}%.", "",
              "## Stance of every collected post, by verdict of its claim", "",
