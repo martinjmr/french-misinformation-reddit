@@ -2,7 +2,7 @@
 
 Which French Reddit posts discuss a claim that fact-checkers have checked, and what do they say about it?
 
-This started as a team project: we built a classifier that labelled posts true, misleading or unverifiable. Its accuracy fell to chance on claims it had not seen in training. I then labelled every post to find out why, and 93% of them never discuss the claim they were collected for. So I changed the question. The project now ranks posts by how likely they are to discuss a given claim, and measures what the relevant posts say about that claim.
+This started as a team project: we built a classifier that labelled posts true, misleading or unverifiable. Its accuracy fell to chance on claims it had not seen in training. I had then an LLM labelled every post to find out why, and 93% of them do not address the specific claim they were retrieved for: they match its keywords, often its topic, but not the claim itself. So I changed the question. The project now ranks posts by how likely they are to discuss a given claim, and measures what the relevant posts say about that claim.
 
 | Step | Result |
 |---|---|
