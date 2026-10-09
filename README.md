@@ -8,7 +8,7 @@ This started as a team project: we built a classifier that labelled posts true, 
 |---|---|
 | Version 1: predict the claim's verdict from the post | 65.6% accuracy when test claims also appear in training, 37.6% on unseen claims (chance: 33.3%) |
 | Label all 3,341 posts | 219 posts (6.6%) discuss their claim. Of the 771 posts collected for misleading claims, 8 relay the claim. |
-| Rank posts by relevance to their claim, on unseen claims | Multilingual sentence embeddings, with no training: average precision 43.2%, against 7.3% for the keyword search alone. Reading the top 20% of posts finds 80% of the relevant ones. A fine-tuned CamemBERT reaches 21.4%. |
+| Rank posts by relevance to their claim, on unseen claims | Multilingual sentence embeddings, with no training: average precision 43.2%, against 31.0% for keyword overlap and 7.3% for the unranked keyword search. Reading the top 20% of posts finds 80% of the relevant ones, against 40% with keyword overlap. A fine-tuned CamemBERT reaches 21.4%. |
 | Predict the stance of relevant posts | Zero-shot NLI and cue-word rules reach a macro-F1 of 47.8% and 47.0%. Only 25 posts refute their claim; NLI finds 12 of them. |
 
 <picture>
