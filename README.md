@@ -20,7 +20,7 @@ This started as a team project: we built a classifier that labelled posts true, 
 
 - **Claims**: 48 claims checked by Les Décodeurs (Le Monde) and AFP Factuel, 16 per verdict (true, misleading, unverifiable). `data/claims.csv` gives each claim with its theme and search keywords.
 - **Posts**: we collected 3,341 Reddit posts in 2026, mostly from r/france (2,358) and r/francophonie (982), with Reddit's keyword search on each claim's keywords. They cover 46 claims. The post text is not redistributed: `data/post_ids.csv` lists the post IDs with the claim that retrieved each one.
-- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following the rules in `docs/annotation_guide.md`. I had Claude (an LLM) apply these rules to every post: it read each post's opening and, when that was not enough, its first 250 words. To check its labels, I labelled 50 posts myself without seeing them (`data/verification_sample.csv`). We agree on 47 of 50 posts (94%, Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it.
+- **Stance labels**: in `data/stance_labels.csv`, every post is labelled off-topic, supports, refutes or discusses relative to the claim that retrieved it, following the rules in `docs/annotation_guide.md`. I had an LLM apply these rules to every post: it read each post's opening and, when that was not enough, its first 250 words. To check its labels, I labelled 50 posts myself without seeing them (`data/verification_sample.csv`). We agree on 47 of 50 posts (94%, Cohen's kappa 0.91). The 3 disagreements are news headlines that imply the claim without stating it.
 
 ## Version 1: predicting the verdict
 
